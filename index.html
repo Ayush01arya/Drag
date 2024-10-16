@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag and Drop Sentence</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Spinner Loader -->
+    <div id="loader" class="loader"></div>
+
+    <!-- Main Content -->
+    <div id="content" class="hidden">
+        <h2> Drag</h2>
+
+        <div class="sentence-area">
+            <!-- Words for dragging -->
+            <div class="words">
+                <div class="word" draggable="true" id="word1">The</div>
+                <div class="word" draggable="true" id="word2">cat</div>
+                <div class="word" draggable="true" id="word3">is</div>
+                <div class="word" draggable="true" id="word4">sleeping</div>
+            </div>
+
+            <!-- Sentence container -->
+            <div class="sentence-container" id="sentence"></div>
+        </div>
+
+        <button id="checkSentence">Check Sentence</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
