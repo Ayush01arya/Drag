@@ -89,12 +89,105 @@
 
         // Expanded list of parts of speech
         const partsOfSpeech = {
-            subject: ["cat", "dog", "boy", "girl", "teacher", "student", "car", "man", "woman"],
-            verb: ["runs", "jumps", "is", "sees", "watches", "plays", "likes", "hates"],
-            object: ["ball", "park", "home", "movie", "food", "music"],
-            adjective: ["fast", "blue", "happy", "big", "small", "tall"],
-            adverb: ["quickly", "happily", "silently", "loudly", "suddenly"],
-        };
+    subject: [
+        "cat", "dog", "boy", "girl", "teacher", "student", "car", "man", "woman", "the", "a", "this", "that",
+        "child", "parent", "friend", "brother", "sister", "family", "neighbor", "classmate", "pet", "pupil",
+        "athlete", "actor", "artist", "musician", "doctor", "nurse", "engineer", "scientist", "author", "journalist",
+        "student", "teacher", "chef", "waiter", "driver", "soldier", "police", "officer", "leader", "customer",
+        "parent", "relative", "neighbor", "boss", "employee", "manager", "president", "teacher", "principal", "guardian",
+        "adult", "baby", "toddler", "teenager", "youth", "adult", "elder", "grandparent", "grandchild", "aunt",
+        "uncle", "cousin", "family", "relative", "friend", "companion", "teammate", "colleague", "associate", "partner",
+        "client", "patient", "traveler", "tourist", "visitor", "shopper", "hiker", "fisherman", "baker", "farmer",
+        "miner", "hunter", "gardener", "designer", "developer", "constructor", "inventor", "researcher", "explorer",
+        "activist", "volunteer", "representative", "senator", "activist", "entrepreneur", "innovator", "trader", "billionaire",
+        "philanthropist", "realtor", "broker", "salesman", "mechanic", "technician", "programmer", "analyst", "consultant"
+    ],
+    verb: [
+        "runs", "jumps", "is", "sees", "watches", "plays", "likes", "hates", "are", "am", "do",
+        "reads", "writes", "draws", "sings", "dances", "talks", "walks", "travels", "thinks", "cooks",
+        "paints", "creates", "builds", "listens", "teaches", "learns", "plays", "studies", "throws",
+        "catches", "carries", "pushes", "pulls", "fixes", "explains", "describes", "invites", "celebrates",
+        "enjoys", "considers", "compares", "helps", "supports", "counsels", "advises", "proposes", "offers",
+        "accepts", "rejects", "confirms", "questions", "researches", "tests", "examines", "observes", "investigates",
+        "analyzes", "discusses", "debates", "negotiates", "competes", "wins", "loses", "challenges", "defeats",
+        "celebrates", "organizes", "plans", "strategizes", "coordinates", "persuades", "motivates", "encourages",
+        "trains", "coaches", "mentors", "advises", "directs", "supervises", "manages", "oversees", "controls",
+        "administers", "regulates", "facilitates", "establishes", "implements", "executes", "accomplishes", "fulfills", "achieves"
+    ],
+    object: [
+        "ball", "park", "home", "movie", "food", "music", "game", "school", "book",
+        "car", "bike", "computer", "phone", "pen", "paper", "table", "chair", "house", "gift",
+        "bag", "cup", "plate", "shoes", "clothes", "toy", "pet", "plant", "tree", "flower",
+        "picture", "document", "folder", "file", "email", "report", "presentation", "project", "idea", "plan",
+        "message", "letter", "card", "invitation", "ticket", "receipt", "contract", "agreement", "schedule",
+        "appointment", "meal", "snack", "drink", "dessert", "recipe", "ingredient", "combination", "seasoning",
+        "cuisine", "food", "fruit", "vegetable", "protein", "carbohydrate", "fat", "fiber", "sugar",
+        "spice", "sauce", "garnish", "dish", "platter", "tray", "bowl", "pan", "kitchen", "chef",
+        "grocery", "market", "store", "shop", "restaurant", "diner", "café", "bar", "pub", "club",
+        "table", "booth", "counter", "window", "door", "path", "road", "bridge", "building", "structure",
+        "block", "area", "district", "region", "country", "continent", "world", "universe", "galaxy", "planet"
+    ],
+    adjective: [
+        "fast", "blue", "happy", "big", "small", "tall", "good", "bad", "beautiful",
+        "bright", "dark", "new", "old", "young", "wise", "funny", "serious", "strong", "weak", "rich",
+        "poor", "easy", "hard", "simple", "complex", "sweet", "sour", "bitter", "spicy", "salty",
+        "hot", "cold", "warm", "cool", "fresh", "stale", "clean", "dirty", "safe", "dangerous",
+        "comfortable", "uncomfortable", "busy", "quiet", "loud", "soft", "hard", "bright", "dim",
+        "colorful", "drab", "pleasant", "unpleasant", "kind", "mean", "friendly", "hostile", "polite",
+        "rude", "curious", "indifferent", "diligent", "lazy", "active", "passive", "honest", "deceitful",
+        "intelligent", "foolish", "clever", "dull", "creative", "imaginative", "innovative", "traditional",
+        "modern", "timeless", "unique", "common", "popular", "rare", "ordinary", "extraordinary", "exceptional"
+    ],
+    adverb: [
+        "quickly", "happily", "silently", "loudly", "suddenly", "very", "too",
+        "slowly", "gracefully", "calmly", "patiently", "anxiously", "nervously", "carefully", "eagerly", "randomly",
+        "always", "often", "sometimes", "rarely", "never", "usually", "seldom", "frequently", "regularly", "periodically",
+        "consistently", "immediately", "eventually", "occasionally", "initially", "previously", "recently", "currently",
+        "temporarily", "permanently", "subsequently", "then", "later", "afterward", "beforehand", "simultaneously",
+        "continuously", "repeatedly", "jointly", "together", "individually", "collectively", "separately", "alternatively",
+        "conversely", "equally", "similarly", "likewise", "differently", "otherwise", "abruptly", "suddenly", "gradually",
+        "profoundly", "significantly", "considerably", "dramatically", "slightly", "mildly", "tremendously", "extremely",
+        "incredibly", "remarkably", "notably", "specifically", "particularly", "substantially", "invariably", "distinctively",
+        "noteworthy", "exceptionally", "unusually", "strikingly", "sharply", "keenly", "vividly", "brightly", "vaguely",
+        "faintly", "dimly", "barely", "merely", "simply", "directly", "indirectly", "implicitly", "explicitly", "clearly"
+    ],
+    conjunction: [
+        "and", "but", "or", "because", "so",
+        "for", "nor", "yet", "although", "though", "while", "whereas", "as", "until", "if", "unless",
+        "provided", "since", "after", "before", "once", "rather", "than", "while", "wherever", "whether",
+        "but", "as well as", "not only", "but also", "both", "either", "neither", "and yet", "in case", "in spite of",
+        "despite", "whether or not", "so that", "in order that", "provided that", "in case that", "although", "even though",
+        "though", "however", "meanwhile", "likewise", "similarly", "conversely", "on the other hand", "in addition",
+        "furthermore", "moreover", "besides", "as a result", "therefore", "hence", "thus", "so that", "to sum up",
+        "that is", "for example", "for instance", "in fact", "to illustrate", "in other words", "for this reason", "because of",
+        "due to", "as a consequence", "on the contrary", "conversely", "otherwise", "alternatively", "at least", "at most"
+    ],
+    preposition: [
+        "in", "on", "at", "by", "for", "with",
+        "about", "against", "among", "between", "before", "after", "during", "through", "within", "without",
+        "to", "from", "over", "under", "above", "below", "near", "far", "along", "across",
+        "past", "behind", "in front of", "inside", "outside", "beyond", "up", "down", "inside", "outside",
+        "throughout", "beside", "next to", "alongside", "opposite", "against", "amongst", "regarding", "concerning",
+        "despite", "in spite of", "due to", "according to", "as for", "in relation to", "in contrast to", "as against",
+        "in favor of", "with respect to", "in addition to", "in conjunction with", "in comparison with", "in light of",
+        "with regard to", "prior to", "subsequent to", "following", "except", "excluding", "amongst", "besides",
+        "notwithstanding", "thanks to", "in view of", "in the absence of", "in the midst of", "in anticipation of",
+        "in connection with", "in compliance with", "in accordance with"
+    ],
+    pronoun: [
+        "he", "she", "it", "they", "them", "we", "us", "I", "you",
+        "me", "my", "mine", "your", "yours", "his", "her", "hers", "its", "our",
+        "ours", "their", "theirs", "who", "whom", "whose", "which", "that", "this",
+        "these", "those", "each", "either", "neither", "some", "any", "all", "most", "many",
+        "few", "several", "both", "one", "another", "such", "no one", "anyone", "everyone", "someone",
+        "anybody", "somebody", "everybody", "nobody", "everything", "anything", "something", "nothing", "where",
+        "what", "when", "why", "how", "whoever", "whomever", "whichever", "whatever", "somewhere",
+        "anywhere", "everywhere", "nowhere", "each other", "one another", "myself", "yourself", "himself",
+        "herself", "itself", "ourselves", "yourselves", "themselves", "whoever", "whatever", "whenever",
+        "whenever", "whosoever", "whichever", "whomever", "none", "themselves", "themselves", "myself", "yourself"
+    ],
+    
+};
 
         // Function to analyze the sentence and create the org chart
         function analyzeSentence(sentence) {
