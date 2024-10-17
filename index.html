@@ -3,189 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Drag and Drop Sentence Builder</title>
+    <title>Sentence Structure OrgChart</title>
+    <link rel="stylesheet" href="https://cdn.rawgit.com/dabeng/OrgChart/master/dist/css/orgchart.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/orgchart/2.1.3/css/jquery.orgchart.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/orgchart/2.1.3/js/jquery.orgchart.min.js"></script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
+            margin: 20px;
         }
 
-        .words {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
+        #chart-container {
+            height: 420px;
+            border: 2px dashed #aaa;
+            border-radius: 5px;
+            overflow: auto;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .orgchart {
+            background: #fff;
+        }
+        .orgchart td.left, .orgchart td.right, .orgchart td.top {
+            border-color: #aaa;
+        }
+        .orgchart td>.down {
+            background-color: #aaa;
+        }
+        .orgchart .subject .title {
+            background-color: #006699;
+        }
+        .orgchart .verb .title {
+            background-color: #009933;
+        }
+        .orgchart .object .title {
+            background-color: #993366;
+        }
+        .orgchart .adjective .title {
+            background-color: #996633;
+        }
+        .orgchart .adverb .title {
+            background-color: #cc0066;
+        }
+        .orgchart .unknown .title {
+            background-color: #ffcc00; /* Yellow for unknown */
+        }
+
+        #github-link {
+            position: fixed;
+            top: 0px;
+            right: 10px;
+            font-size: 3em;
+        }
+
+        #input-container {
             margin-bottom: 20px;
         }
 
-        .word {
-            background-color: #f0f0f0;
-            margin: 10px;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: grab;
-            border: 1px solid #ccc;
-            user-select: none;
-        }
-
-        .sentence-container {
-            min-height: 50px;
-            border: 2px dashed #aaa;
-            margin: 20px auto;
-            padding: 10px;
-            width: 100%;
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .sentence-container .word {
-            margin: 0 5px;
-        }
-
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #4D3CBE;
+        #check-button {
+            padding: 10px 15px;
+            background-color: #006699;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
         }
-
-        button:hover {
-            background-color: #3a31a4;
-        }
-
-        /* Responsive Layout */
-        @media (max-width: 768px) {
-            .sentence-container {
-                width: 90%;
-            }
-        }
-
-        /* Wiggle Animation for Incorrect Sentence */
-        @keyframes wiggle {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            50% { transform: translateX(5px); }
-            75% { transform: translateX(-5px); }
-            100% { transform: translateX(0); }
-        }
-
-        .wiggle {
-            animation: wiggle 0.5s ease;
-            background-color: #ffcccc; /* Light red background on incorrect sentence */
-        }
-
-        /* Animation for Correct Sentence */
-        @keyframes fadeIn {
-            from { opacity: 0; background-color: #ccffcc; } /* Light green background */
-            to { opacity: 1; background-color: transparent; }
-        }
-
-        .animate-in {
-            animation: fadeIn 1s forwards;
-        }
     </style>
 </head>
 <body>
-    <h2>Drag and Drop Words to Form a Sentence</h2>
-    <div class="words">
-        <div class="word" draggable="true">I</div>
-        <div class="word" draggable="true">am</div>
-        <div class="word" draggable="true">learning</div>
-        <div class="word" draggable="true">JavaScript</div>
+    <div id="input-container">
+        <h2>Enter a Sentence:</h2>
+        <input type="text" id="sentence-input" placeholder="e.g., The cat runs quickly" style="width: 300px; padding: 5px;">
+        <button id="check-button">Check Sentence</button>
     </div>
-    <div class="sentence-container"></div>
-    <br>
-    <button id="checkSentence">Check Sentence</button>
+
+    <div id="chart-container"></div>
+
 
     <script>
-        const words = document.querySelectorAll('.word');
-        const sentenceContainer = document.querySelector('.sentence-container');
-        let draggedWord = null;
+        'use strict';
 
-        // Support both Drag-and-Drop for desktop and Touch Events for mobile
-        words.forEach(word => {
-            // Drag Start
-            word.addEventListener('dragstart', function(e) {
-                draggedWord = this;
-                setTimeout(() => {
-                    this.style.display = 'none';
-                }, 0);
+        // Expanded list of parts of speech
+        const partsOfSpeech = {
+            subject: ["cat", "dog", "boy", "girl", "teacher", "student", "car", "man", "woman"],
+            verb: ["runs", "jumps", "is", "sees", "watches", "plays", "likes", "hates"],
+            object: ["ball", "park", "home", "movie", "food", "music"],
+            adjective: ["fast", "blue", "happy", "big", "small", "tall"],
+            adverb: ["quickly", "happily", "silently", "loudly", "suddenly"],
+        };
+
+        // Function to analyze the sentence and create the org chart
+        function analyzeSentence(sentence) {
+            const words = sentence.split(' ');
+            let structure = {
+                'name': 'Sentence Structure',
+                'title': 'Understanding Parts of Speech',
+                'children': []
+            };
+
+            words.forEach(word => {
+                let found = false;
+
+                // Identify the part of speech for each word
+                for (const [key, values] of Object.entries(partsOfSpeech)) {
+                    if (values.includes(word.toLowerCase())) {
+                        structure.children.push({
+                            'name': word,
+                            'title': key.charAt(0).toUpperCase() + key.slice(1),
+                            'className': key
+                        });
+                        found = true;
+                        break;
+                    }
+                }
+
+                // If word is not recognized, add it as an unknown word
+                if (!found) {
+                    structure.children.push({
+                        'name': word,
+                        'title': 'Not Found',
+                        'className': 'unknown'
+                    });
+                }
             });
 
-            // Drag End
-            word.addEventListener('dragend', function() {
-                setTimeout(() => {
-                    draggedWord.style.display = 'block';
-                    draggedWord = null;
-                }, 0);
+            return structure;
+        }
+
+        // Function to display the org chart
+        function displayChart(data) {
+            $('#chart-container').orgchart({
+                'data': data,
+                'nodeContent': 'title'
             });
+        }
 
-            // Touch Start (for mobile)
-            word.addEventListener('touchstart', function(e) {
-                draggedWord = this;
-                this.style.display = 'none';
-                const touch = e.targetTouches[0];
-                draggedWord.style.left = `${touch.pageX}px`;
-                draggedWord.style.top = `${touch.pageY}px`;
-            });
-
-            // Touch Move (to track the touch while moving)
-            word.addEventListener('touchmove', function(e) {
-                const touch = e.targetTouches[0];
-                draggedWord.style.left = `${touch.pageX}px`;
-                draggedWord.style.top = `${touch.pageY}px`;
-            });
-
-            // Touch End
-            word.addEventListener('touchend', function() {
-                setTimeout(() => {
-                    draggedWord.style.display = 'block';
-                    draggedWord = null;
-                }, 0);
-            });
-        });
-
-        // Drag Over
-        sentenceContainer.addEventListener('dragover', function(e) {
-            e.preventDefault();
-        });
-
-        // Drag Drop
-        sentenceContainer.addEventListener('drop', function(e) {
-            e.preventDefault();
-            if (draggedWord) {
-                sentenceContainer.appendChild(draggedWord);
-            }
-        });
-
-        // Touch End - Drop for mobile
-        sentenceContainer.addEventListener('touchend', function(e) {
-            if (draggedWord) {
-                sentenceContainer.appendChild(draggedWord);
-            }
-        });
-
-        // Check the sentence and apply animations for incorrect/correct sentence
-        document.getElementById('checkSentence').addEventListener('click', function() {
-            const sentenceWords = sentenceContainer.querySelectorAll('.word');
-            const formedSentence = Array.from(sentenceWords).map(word => word.textContent).join(' ');
-
-            // Assuming the correct sentence is "I am learning JavaScript"
-            const correctSentence = "I am learning JavaScript";
-
-            if (formedSentence === correctSentence) {
-                sentenceContainer.classList.add('animate-in');
+        // Event listener for the check button
+        $('#check-button').on('click', function() {
+            const sentence = $('#sentence-input').val().trim();
+            if (sentence) {
+                const sentenceStructure = analyzeSentence(sentence);
+                displayChart(sentenceStructure);
             } else {
-                sentenceContainer.classList.add('wiggle');
-                setTimeout(() => {
-                    sentenceContainer.classList.remove('wiggle');
-                }, 500);
+                alert('Please enter a sentence.');
             }
         });
     </script>
