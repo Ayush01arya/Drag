@@ -3,33 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drag and Drop Sentence</title>
-    <link rel="stylesheet" href="style.css">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Drag and Drop Sentence Builder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .words {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .word {
+            background-color: #f0f0f0;
+            margin: 10px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: grab;
+            border: 1px solid #ccc;
+            user-select: none;
+        }
+
+        .sentence-container {
+            min-height: 50px;
+            border: 2px dashed #aaa;
+            margin: 20px auto;
+            padding: 10px;
+            width: 100%;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .sentence-container .word {
+            margin: 0 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4D3CBE;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #3a31a4;
+        }
+
+        /* Responsive Layout */
+        @media (max-width: 768px) {
+            .sentence-container {
+                width: 90%;
+            }
+        }
+
+        /* Wiggle Animation for Incorrect Sentence */
+        @keyframes wiggle {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+
+        .wiggle {
+            animation: wiggle 0.5s ease;
+            background-color: #ffcccc; /* Light red background on incorrect sentence */
+        }
+
+        /* Animation for Correct Sentence */
+        @keyframes fadeIn {
+            from { opacity: 0; background-color: #ccffcc; } /* Light green background */
+            to { opacity: 1; background-color: transparent; }
+        }
+
+        .animate-in {
+            animation: fadeIn 1s forwards;
+        }
+    </style>
 </head>
 <body>
-    <!-- Spinner Loader -->
-    <div id="loader" class="loader"></div>
-
-    <!-- Main Content -->
-    <div id="content" class="hidden">
-        <h2> Drag</h2>
-
-        <div class="sentence-area">
-            <!-- Words for dragging -->
-            <div class="words">
-                <div class="word" draggable="true" id="word1">The</div>
-                <div class="word" draggable="true" id="word2">cat</div>
-                <div class="word" draggable="true" id="word3">is</div>
-                <div class="word" draggable="true" id="word4">sleeping</div>
-            </div>
-
-            <!-- Sentence container -->
-            <div class="sentence-container" id="sentence"></div>
-        </div>
-
-        <button id="checkSentence">Check Sentence</button>
+    <h2>Drag and Drop Words to Form a Sentence</h2>
+    <div class="words">
+        <div class="word" draggable="true">I</div>
+        <div class="word" draggable="true">am</div>
+        <div class="word" draggable="true">learning</div>
+        <div class="word" draggable="true">JavaScript</div>
     </div>
+    <div class="sentence-container"></div>
+    <br>
+    <button id="checkSentence">Check Sentence</button>
 
-    <script src="script.js"></script>
+    <script>
+        const words = document.querySelectorAll('.word');
+        const sentenceContainer = document.querySelector('.sentence-container');
+        let draggedWord = null;
+
+        // Support both Drag-and-Drop for desktop and Touch Events for mobile
+        words.forEach(word => {
+            // Drag Start
+            word.addEventListener('dragstart', function(e) {
+                draggedWord = this;
+                setTimeout(() => {
+                    this.style.display = 'none';
+                }, 0);
+            });
+
+            // Drag End
+            word.addEventListener('dragend', function() {
+                setTimeout(() => {
+                    draggedWord.style.display = 'block';
+                    draggedWord = null;
+                }, 0);
+            });
+
+            // Touch Start (for mobile)
+            word.addEventListener('touchstart', function(e) {
+                draggedWord = this;
+                this.style.display = 'none';
+                const touch = e.targetTouches[0];
+                draggedWord.style.left = `${touch.pageX}px`;
+                draggedWord.style.top = `${touch.pageY}px`;
+            });
+
+            // Touch Move (to track the touch while moving)
+            word.addEventListener('touchmove', function(e) {
+                const touch = e.targetTouches[0];
+                draggedWord.style.left = `${touch.pageX}px`;
+                draggedWord.style.top = `${touch.pageY}px`;
+            });
+
+            // Touch End
+            word.addEventListener('touchend', function() {
+                setTimeout(() => {
+                    draggedWord.style.display = 'block';
+                    draggedWord = null;
+                }, 0);
+            });
+        });
+
+        // Drag Over
+        sentenceContainer.addEventListener('dragover', function(e) {
+            e.preventDefault();
+        });
+
+        // Drag Drop
+        sentenceContainer.addEventListener('drop', function(e) {
+            e.preventDefault();
+            if (draggedWord) {
+                sentenceContainer.appendChild(draggedWord);
+            }
+        });
+
+        // Touch End - Drop for mobile
+        sentenceContainer.addEventListener('touchend', function(e) {
+            if (draggedWord) {
+                sentenceContainer.appendChild(draggedWord);
+            }
+        });
+
+        // Check the sentence and apply animations for incorrect/correct sentence
+        document.getElementById('checkSentence').addEventListener('click', function() {
+            const sentenceWords = sentenceContainer.querySelectorAll('.word');
+            const formedSentence = Array.from(sentenceWords).map(word => word.textContent).join(' ');
+
+            // Assuming the correct sentence is "I am learning JavaScript"
+            const correctSentence = "I am learning JavaScript";
+
+            if (formedSentence === correctSentence) {
+                sentenceContainer.classList.add('animate-in');
+            } else {
+                sentenceContainer.classList.add('wiggle');
+                setTimeout(() => {
+                    sentenceContainer.classList.remove('wiggle');
+                }, 500);
+            }
+        });
+    </script>
 </body>
 </html>
